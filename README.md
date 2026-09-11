@@ -8,9 +8,10 @@
 
 - [`install.sh`](./install.sh): 의존성 설치, 드라이버 통합, 빌드, 격리 설치, systemd/udev 설정을 한 번에 수행하는 스크립트
 - [`uninstall.sh`](./uninstall.sh): 설치된 라이브러리 및 설정을 깔끔하게 삭제하고 시스템 기본 상태로 되돌리는 스크립트
-- [`egistec-eh57e-linux/`](./egistec-eh57e-linux/): 최신 EgisTec EH57E libfprint 드라이버 소스 (ApexMene)
-- [`eh57e-linux-driver/`](./eh57e-linux-driver/): 역공학 분석 및 USB 프로브 도구 (Cruise42)
-- [`libfprint-src/`](./libfprint-src/): 업스트림 libfprint 소스 트리 (빌드 대상)
+- [`driver/`](./driver/): 사전 최적화된 EH57E 드라이버 소스 (`egis057e.c`, `egis057e.h`)
+- `egistec-eh57e-linux/`: 최신 EgisTec EH57E libfprint 드라이버 소스 ([ApexMene 저장소](https://github.com/ApexMene/egistec-eh57e-linux))
+- `eh57e-linux-driver/`: 역공학 분석 및 USB 프로브 도구 ([Cruise42 저장소](https://github.com/Cruise42/eh57e-linux-driver))
+- `libfprint-src/`: 업스트림 libfprint 소스 트리 ([freedesktop.org 저장소](https://gitlab.freedesktop.org/libfprint/libfprint))
 
 ---
 
@@ -57,3 +58,17 @@ cd ~/minsoft/galaxy-book-pro-360
 ./uninstall.sh
 ```
 설치된 라이브러리와 서비스 오버라이드가 완전히 제거되고 순정 상태로 복구됩니다.
+
+---
+
+## 🔗 참고 자료 및 크레딧 (References & Credits)
+
+본 프로젝트의 드라이버 빌드 및 설치 자동화 환경은 아래 오픈소스 프로젝트와 기여자분들의 연구 및 작업물을 바탕으로 구성되었습니다:
+
+- **드라이버 구현체:** [ApexMene/egistec-eh57e-linux](https://github.com/ApexMene/egistec-eh57e-linux)
+  - EgisTec EH57E 센서를 위한 libfprint 드라이버 (`egis057e.c`, `egis057e.h`) 구현 및 패치
+- **역공학 및 프로토콜 분석:** [Cruise42/eh57e-linux-driver](https://github.com/Cruise42/eh57e-linux-driver)
+  - Windows 드라이버 USB 트래픽 캡처, EH57E 초기화 시퀀스 역공학 및 파이썬 프로브 도구
+- **업스트림 라이브러리:** [freedesktop.org libfprint](https://gitlab.freedesktop.org/libfprint/libfprint)
+  - Linux 공식 지문 인식 프레임워크 라이브러리 (빌드 베이스)
+

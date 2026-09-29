@@ -561,9 +561,34 @@ init_run_state (FpiSsm *ssm, FpDevice *dev)
 }
 
 static void
+open_failed (FpDevice *dev, GError *error, gboolean interface_claimed)
+{
+  GUsbDevice *usb_dev = fpi_device_get_usb_device (dev);
+  g_autoptr(GError) cleanup_error = NULL;
+
+  /* Failed OPEN does not enter dev_close() or fpi_device_close_complete(). */
+  if (interface_claimed &&
+      !g_usb_device_release_interface (usb_dev, 0, 0, &cleanup_error))
+    {
+      fp_warn ("Failed to release interface after open failure: %s",
+               cleanup_error ? cleanup_error->message : "unknown error");
+      g_clear_error (&cleanup_error);
+    }
+
+  if (!g_usb_device_close (usb_dev, &cleanup_error))
+    fp_warn ("Failed to close USB device after open failure: %s",
+             cleanup_error ? cleanup_error->message : "unknown error");
+
+  fpi_device_open_complete (dev, error);
+}
+
+static void
 open_bg_done (FpiSsm *ssm, FpDevice *dev, GError *error)
 {
-  fpi_device_open_complete (dev, error);
+  if (error)
+    open_failed (dev, error, TRUE);
+  else
+    fpi_device_open_complete (dev, NULL);
 }
 
 static void
@@ -571,7 +596,7 @@ open_init_done (FpiSsm *ssm, FpDevice *dev, GError *error)
 {
   if (error)
     {
-      fpi_device_open_complete (dev, error);
+      open_failed (dev, error, TRUE);
       return;
     }
 
@@ -589,7 +614,7 @@ dev_open (FpDevice *dev)
   if (!g_usb_device_claim_interface (fpi_device_get_usb_device (dev), 0, 0,
                                      &error))
     {
-      fpi_device_open_complete (dev, error);
+      open_failed (dev, error, FALSE);
       return;
     }
 
